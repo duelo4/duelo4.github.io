@@ -31,6 +31,9 @@ ul{padding-left:20px}
 .aviso{border-color:#E53935}
 .pequeno{color:var(--sec);font-size:13px}
 .indisponivel{opacity:.5;pointer-events:none}
+.convite{display:none;text-align:center;border:2px dashed var(--amarelo);background:rgba(255,196,0,.07)}
+.convite .codigo{font-size:32px;font-weight:900;letter-spacing:3px;margin:6px 0}
+.copiar{background:var(--amarelo);color:#1a1300;border:0;font-weight:900;font-size:16px;padding:12px 22px;border-radius:12px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -39,6 +42,14 @@ ul{padding-left:20px}
     <img src="logo.png" alt="Duelo4">
     <h1>Duelo4 – 4 em Linha</h1>
     <p class="data">Partidas 1 contra 1 em tempo real • Ranking mensal • Partidas com prêmio</p>
+  </div>
+
+  <div id="convite" class="cartao convite">
+    <div style="font-size:30px">🎁</div>
+    <strong>Você foi convidado por um amigo!</strong>
+    <p class="pequeno" style="margin:6px 0">Ao criar sua conta no app, digite este código de indicação:</p>
+    <div id="codigo" class="codigo"></div>
+    <button id="copiar" class="copiar" type="button">Copiar código</button>
   </div>
 
   <a id="baixar1" class="botao grande" href="#">⬇️ Baixar o Duelo4 (Android)</a>
@@ -98,6 +109,24 @@ function configurar(id, link, textoIndisponivel) {
 }
 configurar('baixar1', LINK_PRINCIPAL, 'Download disponível em breve');
 configurar('baixar2', LINK_ALTERNATIVO, 'Link alternativo em breve');
+
+(function () {
+  const bruto = (new URLSearchParams(location.search).get('c') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const sem = bruto.indexOf('D4') === 0 && bruto.length === 8 ? bruto.slice(2) : bruto;
+  if (!/^[A-HJ-NP-Z2-9]{6}$/.test(sem)) return;
+  const codigo = 'D4-' + sem;
+  document.getElementById('codigo').textContent = codigo;
+  document.getElementById('convite').style.display = 'block';
+  const botao = document.getElementById('copiar');
+  botao.addEventListener('click', function () {
+    const pronto = function () { botao.textContent = '✅ Código copiado!'; };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(codigo).then(pronto, function () { prompt('Copie o código:', codigo); });
+    } else {
+      prompt('Copie o código:', codigo);
+    }
+  });
+})();
 </script>
 </body>
 </html>
